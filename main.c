@@ -57,35 +57,36 @@ void sympthon(){
     }
 }
 void Romberg(){
-    int n;
-    double h,T1,s,m,c,k,i,j,x,t,Tj;
-    c=log2(16.0);
+    int n,k,i,j,g;
+    double h,T1,s,m,x,t;
+
+    double T[10][10];
 
     n=1; 
     h=b-a;
-    T1=h*(f(a)+f(b))/2;//T1=I(n);
-    printf("I_1(%2d)=%11.8f\n",n,T1);
+    T[1][1]=h*(f(a)+f(b))/2;//T1=I(n);
+    printf("I_1(%2d)=%11.8f\n",n,T[1][1]);
 
-    for(k=1;k<=c;k++){
+    for(k=1;k<=log2(16.0);k++){
         s=0;
         for(i=1;i<=n;i++){
             x=a+(i-0.5)*h;
             s=s+f(x);
         }
-        s=(T1+h*s)/2;//s=I_1(n)
+        s=(T[k][1]+h*s)/2;//s=I_1(n)<初回はT[1][1]>
         h=h/2;//幅半分
         n=n*2;//分割数２倍
-        printf("I_1(%2d)=%11.8f  ",n,s);
-
         m=1;
         for(j=1;j<=k;j++){
-            t=T1;
-            T1=s;
+            t=T[k][j];//初回T[1][1]が避難
+            T[k+1][j]=s;//初回T[2][1]へ代入
             m=m*4;
-            s=(m*s-t)/(m-1);//I_j+1(n);
-            printf("I_%1.0f(%2d)=%11.8f  ",j+1,n,s);
+            s=(m*s-t)/(m-1);//I_j+1(n)//次のI_j(n);
         }
-        T1=s;
+        T[k+1][j]=s;//初回T[2][1]の値I_j(n)
+        for(g=1;g<=k+1;g++){
+            printf("I_1(%2d)=%11.8f ",n,T[k+1][g]);
+        }
         printf("\n");
     }
     return;
